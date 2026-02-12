@@ -1,3 +1,4 @@
 /data
 /diffusion
 activate
+__pycache__
