@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class Dataset_(torch.utils.data.Dataset):
     def __init__(self, data):
         self.data = data
@@ -9,8 +10,9 @@ class Dataset_(torch.utils.data.Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        return self.data[idx]
-
+        x = self.data[idx]          # shape [128, 6000]
+        x = x.unsqueeze(0)          # add channel → [1, 128, 6000]
+        return x
 
 
 class DataLoader_AutoEncoder:
@@ -21,17 +23,16 @@ class DataLoader_AutoEncoder:
         self.shuffle = shuffle
 
     def __iter__(self):
-        indices = list(range(len(self.dataset)))
         if self.shuffle:
-            torch.random.shuffle(indices)
+            indices = torch.randperm(len(self.dataset)).tolist()
+        else:
+            indices = list(range(len(self.dataset)))
 
-        batches = []
         for start in range(0, len(self.dataset), self.batch_size):
-            batch_indices = indices[start:start + self.batch_size]
-            batch = torch.stack([torch.tensor(self.dataset[i]) for i in batch_indices])
-            batches.append(batch)
-        
-        return batches
+            batch_indices = indices[start:start+self.batch_size]
+            batch = torch.stack([self.dataset[i] for i in batch_indices])
+            yield batch
+
 
 
 class DataLoader_Diffusion:
@@ -42,15 +43,13 @@ class DataLoader_Diffusion:
         self.shuffle = shuffle
 
     def __iter__(self):
-        indices = list(range(len(self.dataset)))
         if self.shuffle:
-            torch.random.shuffle(indices)
+            indices = torch.randperm(len(self.dataset)).tolist()
+        else:
+            indices = list(range(len(self.dataset)))
 
-        batches = []
         for start in range(0, len(self.dataset), self.batch_size):
             batch_indices = indices[start:start + self.batch_size]
             batch = torch.stack([torch.tensor(self.dataset[i]) for i in batch_indices])
-            batches.append(batch)
-        
-        return batches
+            yield batch
 

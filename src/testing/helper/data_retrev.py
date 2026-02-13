@@ -10,12 +10,15 @@ def load_mels_with_labels_tuples(
     n_mels=128,
     hop_length=512,
     n_fft=2048,
-    device="cpu"
+    device="cpu",
+    with_labels=True,
+    max_frames=6000
 ):
     """
     Load all mp3 files as mel spectrograms and return a list of (tensor, label) tuples.
     
     Label is extracted as everything before the first '--' in the filename.
+    Only keeps the first max_frames time steps (~2 min at default hop_length).
     
     Returns:
         List[Tuple[torch.FloatTensor, str]]  # (mel_matrix, label)
@@ -27,7 +30,6 @@ def load_mels_with_labels_tuples(
 
     mel_tensors = []
     labels = []
-    min_T = float("inf")
 
     for path in mp3_files:
         filename = os.path.basename(path)
@@ -56,13 +58,23 @@ def load_mels_with_labels_tuples(
         )
         mel_db = librosa.power_to_db(mel, ref=np.max, top_db=80)
 
+        # Truncate to max_frames
+        mel_db = mel_db[:, :max_frames]
+
         mel_tensor = torch.tensor(mel_db, dtype=torch.float32)
         mel_tensors.append(mel_tensor)
-        min_T = min(min_T, mel_tensor.shape[1])
 
-    dataset = [
-        (mel[:, :min_T].to(device), label)
-        for mel, label in zip(mel_tensors, labels)
-    ]
+    if not with_labels:
+        dataset = mel_tensors
+    else:
+        dataset = [
+            (mel.to(device), label)
+            for mel, label in zip(mel_tensors, labels)
+        ]
+    
+    torch.save(dataset, "../../json_data/dataset.pt")
 
     return dataset
+
+
+

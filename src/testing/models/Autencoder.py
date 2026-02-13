@@ -13,7 +13,8 @@ class AutoEncoderBlock(nn.Module):
         self.encode = encode
         self.in_channel = in_c
         self.out_channel = out_c
-        self.conv = nn.Conv2d(in_c, out_c, kernel_size=3, stride=2)
+        # Padding keeps spatial sizes from collapsing too fast in the decoder.
+        self.conv = nn.Conv2d(in_c, out_c, kernel_size=3, stride=2, padding=1)
         if encode:
             self.maxPooling = nn.MaxPool2d(kernel_size=2,stride=2 )
             self.up_conv = None
@@ -49,10 +50,13 @@ class AutoEncoder(nn.Module):
             AutoEncoderBlock(encode=False,in_c=64,out_c=32),
             AutoEncoderBlock(encode=False,in_c=32,out_c=1),
         )
+        # Upsample decoder output back to original spatial dimensions
+        self.final_upsample = nn.Upsample(size=(128, 6000), mode='bilinear', align_corners=False)
 
     def forward(self,x):
         x = self.encoder(x)
         x = self.decoder(x)
+        x = self.final_upsample(x)
         return x
     
     def encode_latent(self,x):
