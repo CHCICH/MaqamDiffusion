@@ -65,6 +65,7 @@ class AutoEncoder(nn.Module):
     
     def decode_latent(self,x):
         x = self.decoder(x)
+        x = self.final_upsample(x)
         return x
     
 

@@ -2,10 +2,24 @@ import torch
 import torch.nn as nn
 
 
-class Dataset_(torch.utils.data.Dataset):
-    def __init__(self, data):
-        self.data = data
+def normalize_data(data):
+    normalized_data = []
+    min_val = 0
+    max_val = 80
+    for tensor in data:
+        if max_val > min_val:  # Avoid division by zero
+            normalized_tensor = (tensor - min_val) / (max_val - min_val)
+        else:
+            normalized_tensor = tensor  # If all values are the same, return as is
+        normalized_data.append(normalized_tensor)
+    return normalized_data
 
+class Dataset_(torch.utils.data.Dataset):
+    def __init__(self, data,normalize=False):
+        self.data = data
+        self.normalize = normalize
+        if self.normalize:
+            self.data = normalize_data(self.data)
     def __len__(self):
         return len(self.data)
 
