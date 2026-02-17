@@ -4,13 +4,13 @@ import torch.nn as nn
 
 def normalize_data(data):
     normalized_data = []
-    min_val = 0
-    max_val = 80
+    min_val = -80
+    max_val = 0
     for tensor in data:
-        if max_val > min_val:  # Avoid division by zero
+        if max_val > min_val:  
             normalized_tensor = (tensor - min_val) / (max_val - min_val)
         else:
-            normalized_tensor = tensor  # If all values are the same, return as is
+            normalized_tensor = tensor  
         normalized_data.append(normalized_tensor)
     return normalized_data
 
@@ -24,8 +24,8 @@ class Dataset_(torch.utils.data.Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        x = self.data[idx]          # shape [128, 6000]
-        x = x.unsqueeze(0)          # add channel → [1, 128, 6000]
+        x = self.data[idx]          
+        x = x.unsqueeze(0)          
         return x
 
 

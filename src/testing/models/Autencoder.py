@@ -37,7 +37,7 @@ class AutoEncoderBlock(nn.Module):
     
 
 class AutoEncoder(nn.Module):
-    def __init__(self):
+    def __init__(self,width=128, height=1000):
         super(AutoEncoder, self).__init__()
         self.encoder = nn.Sequential(
             AutoEncoderBlock(1, 32, encode=True),
@@ -50,8 +50,7 @@ class AutoEncoder(nn.Module):
             AutoEncoderBlock(encode=False,in_c=64,out_c=32),
             AutoEncoderBlock(encode=False,in_c=32,out_c=1),
         )
-        # Upsample decoder output back to original spatial dimensions
-        self.final_upsample = nn.Upsample(size=(128, 6000), mode='bilinear', align_corners=False)
+        self.final_upsample = nn.Upsample(size=(width, height), mode='bilinear', align_corners=False)
 
     def forward(self,x):
         x = self.encoder(x)

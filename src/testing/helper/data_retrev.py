@@ -10,9 +10,10 @@ def load_mels_with_labels_tuples(
     n_mels=128,
     hop_length=512,
     n_fft=2048,
-    device="cpu",
+    device="cuda" if torch.cuda.is_available() else "cpu",
     with_labels=True,
-    max_frames=6000
+    max_frames=1000,
+    saved_path="dataset_updated"
 ):
     """
     Load all mp3 files as mel spectrograms and return a list of (tensor, label) tuples.
@@ -33,10 +34,8 @@ def load_mels_with_labels_tuples(
 
     for path in mp3_files:
         filename = os.path.basename(path)
-        print(f"processing {filename}")
         label = filename.split("--")[0]
-        labels.append(label)
-        print(f"labeling as {label}") 
+        
 
         y, _ = librosa.load(
             path,
@@ -57,12 +56,18 @@ def load_mels_with_labels_tuples(
             n_mels=n_mels
         )
         mel_db = librosa.power_to_db(mel, ref=np.max, top_db=80)
+        n_mels, T = mel_db.shape  
+        for i in range(0, T, max_frames):
+            print(f"processing {filename} version {i//max_frames + 1} with label {label}")
+            chunk = mel_db[:, i:i+max_frames]
+            if chunk.shape[1] < max_frames:
+                pad = max_frames - chunk.shape[1]
+                chunk = np.concatenate([chunk, -80*np.ones((n_mels, pad))], axis=1)
 
-        # Truncate to max_frames
-        mel_db = mel_db[:, :max_frames]
+            mel_tensor = torch.tensor(chunk, dtype=torch.float32)
+            mel_tensors.append(mel_tensor)
+            labels.append(label)
 
-        mel_tensor = torch.tensor(mel_db, dtype=torch.float32)
-        mel_tensors.append(mel_tensor)
 
     if not with_labels:
         dataset = mel_tensors
@@ -72,7 +77,7 @@ def load_mels_with_labels_tuples(
             for mel, label in zip(mel_tensors, labels)
         ]
     
-    torch.save(dataset, "../../json_data/dataset.pt")
+    torch.save(dataset, f"../../json_data/{saved_path}.pt")
 
     return dataset
 
