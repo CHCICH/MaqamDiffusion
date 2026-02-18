@@ -3,59 +3,60 @@ import torch.nn as nn
 import numpy as np
 
 
-#this is the definiton of the Autoencoder block this could be used in both the encoder and the decoder 
+#this is the definiton of the Autoencoder block this could be used in both the encoder and the decder 
 
 class AutoEncoderBlock(nn.Module):
-    def __init__(self, in_c, out_c,encode=False):
+    def __init__(self, in_channels, out_channels, mode="encode"):
+        super().__init__()
 
-        super(AutoEncoderBlock, self).__init__()
+        assert mode in ["encode", "decode"]
+        self.mode = mode
 
-        self.encode = encode
-        self.in_channel = in_c
-        self.out_channel = out_c
-        # Padding keeps spatial sizes from collapsing too fast in the decoder.
-        self.conv = nn.Conv2d(in_c, out_c, kernel_size=3, stride=2, padding=1)
-        if encode:
-            self.maxPooling = nn.MaxPool2d(kernel_size=2,stride=2 )
-            self.up_conv = None
+        if mode == "encode":
+            self.op = nn.Conv2d(
+                in_channels,
+                out_channels,
+                kernel_size=3,
+                stride=2,
+                padding=1
+            )
         else:
-            self.maxPooling = None
-            self.up_conv = nn.ConvTranspose2d(out_c, out_c,4,2,1)
-    
+            self.op = nn.ConvTranspose2d(
+                in_channels,
+                out_channels,
+                kernel_size=4,
+                stride=2,
+                padding=1
+            )
 
-        self.relu = nn.ReLU()
-        self.bnorm = nn.BatchNorm2d(out_c)
+        self.norm = nn.GroupNorm(8, out_channels)
+        self.act = nn.ReLU(inplace=True)
 
-    def forward(self,x):
-        x_p = self.conv(x)
-        x_p = self.relu(self.bnorm(x_p))
-        if self.encode:
-            x_p = self.maxPooling(x_p)
-        else:
-            x_p = self.up_conv(x_p)
-        return x_p
+    def forward(self, x):
+        x = self.op(x)
+        x = self.norm(x)
+        x = self.act(x)
+        return x
     
 
 class AutoEncoder(nn.Module):
     def __init__(self,width=128, height=1000):
         super(AutoEncoder, self).__init__()
         self.encoder = nn.Sequential(
-            AutoEncoderBlock(1, 32, encode=True),
-            AutoEncoderBlock(32, 64, encode=True),
-            AutoEncoderBlock(64, 128, encode=True)
+            AutoEncoderBlock(1, 32, mode="encode"),
+            AutoEncoderBlock(32, 64, mode="encode"),
+            AutoEncoderBlock(64, 128, mode="encode")
         )   
 
         self.decoder = nn.Sequential(
-            AutoEncoderBlock(encode=False,in_c=128,out_c=64),
-            AutoEncoderBlock(encode=False,in_c=64,out_c=32),
-            AutoEncoderBlock(encode=False,in_c=32,out_c=1),
+            AutoEncoderBlock(128, 64, mode="decode"),
+            AutoEncoderBlock(64, 32, mode="decode"),
+            AutoEncoderBlock(32, 1, mode="decode"),
         )
-        self.final_upsample = nn.Upsample(size=(width, height), mode='bilinear', align_corners=False)
 
     def forward(self,x):
         x = self.encoder(x)
         x = self.decoder(x)
-        x = self.final_upsample(x)
         return x
     
     def encode_latent(self,x):
@@ -64,7 +65,6 @@ class AutoEncoder(nn.Module):
     
     def decode_latent(self,x):
         x = self.decoder(x)
-        x = self.final_upsample(x)
         return x
     
 
