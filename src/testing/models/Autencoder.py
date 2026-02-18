@@ -28,8 +28,7 @@ class AutoEncoderBlock(nn.Module):
                 stride=2,
                 padding=1
             )
-
-        self.norm = nn.GroupNorm(8, out_channels)
+        self.norm = nn.BatchNorm2d(out_channels)
         self.act = nn.ReLU(inplace=True)
 
     def forward(self, x):
