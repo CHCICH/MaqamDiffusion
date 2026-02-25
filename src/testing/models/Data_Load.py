@@ -27,6 +27,24 @@ class Dataset_(torch.utils.data.Dataset):
         x = self.data[idx]          
         x = x.unsqueeze(0)          
         return x
+    
+
+class Dataset_Diffusion(torch.utils.data.Dataset):
+    def __init__(self, data,normalize=False):
+        intermidate_data = [item[0] for item in data]
+        self.data = intermidate_data
+        self.labels = [item[1] for item in data]
+        self.normalize = normalize
+        ## for now let's not normalize the data because it has labels
+        if self.normalize:
+            self.data = normalize_data(self.data)
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        x = self.data[idx]          
+        x = x.unsqueeze(0)          
+        return x, self.labels[idx]
 
 
 class DataLoader_AutoEncoder:
@@ -64,6 +82,9 @@ class DataLoader_Diffusion:
 
         for start in range(0, len(self.dataset), self.batch_size):
             batch_indices = indices[start:start + self.batch_size]
-            batch = torch.stack([torch.tensor(self.dataset[i]) for i in batch_indices])
-            yield batch
+            batch = torch.stack([torch.tensor(self.dataset[i][0]) for i in batch_indices])
+            labels = [self.dataset[i][1] for i in batch_indices]
+            yield batch, labels
+
+
 

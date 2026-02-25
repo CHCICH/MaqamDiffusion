@@ -82,3 +82,13 @@ class DenoiserNetwork_Unet(nn.Module):
             x = up.forward(x, t)
         
         return self.output(x)
+    
+
+def converter_class_idx(class_idx,in_mapping=False):
+    inverse_class_mapping = {'bayat': 1, 'hijaz': 7, 'hijazkar': 6, 'kurd': 0, 'nahawand': 4, 'rast': 3, 'saba': 5, 'segah': 2}
+    class_mapping = {1: 'bayat', 7: 'hijaz', 6: 'hijazkar', 0: 'kurd', 4: 'nahawand', 3: 'rast', 5: 'saba', 2: 'segah'}
+
+    if in_mapping:
+        return inverse_class_mapping.get(class_idx, -1)
+    else:
+        return class_mapping.get(class_idx, -1)
