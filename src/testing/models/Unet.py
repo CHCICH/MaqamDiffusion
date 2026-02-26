@@ -2,9 +2,10 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+
 class U_net_Block(nn.Module):
     def __init__(self,in_ch, out_ch, diffusion_time_emb_dim, up=False):
-        super.__init__()
+        super(U_net_Block, self).__init__()
         self.time_mlp = nn.Linear(diffusion_time_emb_dim,out_ch)
         if up:
             self.conv1 = nn.Conv2d(2*in_ch,out_ch,3,padding=1)
@@ -57,6 +58,7 @@ class DenoiserNetwork_Unet(nn.Module):
                 nn.Linear(diffusion_time_emd_dim, diffusion_time_emd_dim),
                 nn.ReLU()
         )
+        self.label_emb = nn.Embedding(8, diffusion_time_emd_dim) 
         
         self.conv0 = nn.Conv2d(image_channels, down_channels[0], 3, padding=1)
         self.downs = nn.ModuleList([
@@ -69,8 +71,10 @@ class DenoiserNetwork_Unet(nn.Module):
         ])
         self.output = nn.Conv2d(up_channels[-1], out_dim, 1)
 
-    def forward(self, x, timestep):
+    def forward(self, x, timestep, label):
         t = self.time_mlp(timestep)
+        label_emb = self.label_emb(label)
+        t = t + label_emb
         x = self.conv0(x)
         residual_inputs = []
         for down in self.downs:
@@ -92,3 +96,9 @@ def converter_class_idx(class_idx,in_mapping=False):
         return inverse_class_mapping.get(class_idx, -1)
     else:
         return class_mapping.get(class_idx, -1)
+    
+
+def score_estimation(x_t, x_0_hat, alpha_t ):
+    eps_theta = (x_t - alpha_t * x_0_hat) / torch.sqrt(1 - alpha_t**2)
+    return eps_theta
+

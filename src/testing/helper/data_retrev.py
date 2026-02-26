@@ -31,8 +31,10 @@ def load_mels_with_labels_tuples(
 
     mel_tensors = []
     labels = []
-
+    music_start_time_list = []
+    counter = 0
     for path in mp3_files:
+        music_start_time_list.append(counter)
         filename = os.path.basename(path)
         label = filename.split("--")[0]
         
@@ -67,7 +69,7 @@ def load_mels_with_labels_tuples(
             mel_tensor = torch.tensor(chunk, dtype=torch.float32)
             mel_tensors.append(mel_tensor)
             labels.append(label)
-
+            counter += 1
 
     if not with_labels:
         dataset = mel_tensors
@@ -79,7 +81,7 @@ def load_mels_with_labels_tuples(
     
     torch.save(dataset, f"../../json_data/{saved_path}.pt")
 
-    return dataset
+    return dataset,music_start_time_list
 
 
 
