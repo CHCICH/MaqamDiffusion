@@ -9,11 +9,9 @@ The goal of the project is to explore various methods for Maqam identification a
 ### 1) **Conditional Score-Based Diffusion**:
    - This method involves conditioning the model on some additional information, such as the type of Maqam, to improve classification performance. The model learns to generate or classify Maqam music with higher accuracy by incorporating this conditioning.
 
-### 2) **Unconditional Score-Based Diffusion**:
+### 2) **Autoencoder latent classification**:
    - This method focuses on learning the distribution of Maqam music without additional conditioning. The model learns to generate or represent Maqam music from scratch in an unsupervised manner.
 
-### 3) **Positional Ornamental Embedding**:
-   - Arabic music is known for its ornamentation (trills, slides, microtonal variations). This method seeks to capture the **context** and **placement** of ornamental features across a performance, allowing the model to understand and replicate the fine details of Maqam music.
 
 ## Dependencies
 
