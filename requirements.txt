@@ -1,0 +1,10 @@
+librosa
+torch
+matplotlib
+numpy
+sympy
+soundfile
+scipy
+torchvision
+torchaudio
+mido
