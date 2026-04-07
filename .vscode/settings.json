@@ -1,0 +1,10 @@
+{
+  "python.defaultInterpreterPath": "/home/chich/dev/vip/MaqamDiffusion/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.extraPaths": [
+    "/home/chich/dev/vip/MaqamDiffusion/.venv/lib64/python3.14/site-packages"
+  ],
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "terminal.integrated.defaultProfile.linux": "bash"
+}

@@ -5,7 +5,7 @@ import librosa
 import numpy as np
 
 def load_mels_with_labels_tuples(
-    folder="../../data/",
+    folder="../../data/", 
     sr=22050,
     n_mels=128,
     hop_length=512,
