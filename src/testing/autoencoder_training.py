@@ -1,4 +1,5 @@
 import os
+import json
 
 import torch
 from check import setup_torch
@@ -79,8 +80,9 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
     else:
         raise ValueError("Invalid Optimizer")
 
-    schdeluer = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.955)
     num_epochs = epoch
+    epochList = []
     for epoch in range(num_epochs):
         for batch in dataLoader:
             images, labels = batch
@@ -92,18 +94,26 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+        scheduler.step()
+        epochList.append(loss.item())
+        print(f"lr = {lr_rate} Loss {epoch + 1}/{num_epochs} Loss is L ={loss.item()} ")
 
-        print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}")
-    return latent_model, Loss_fn, optimizer, num_epochs
+    return latent_model, Loss_fn, optimizer, num_epochs, epochList
 
-
-lr_rate = 0.02
-epoch = 300
-latent_model, Loss_fn, optimizer, num_epochs = train(
-    epoch, lr_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
-)
+    # this is the first attempt to be able to do the classifications of Maqam in the latent space without contrastive learning methods
 
 
+LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
+epoch = 1
+
+List_of_all_hyperparams = []
+for lr_rate in LR_rate:
+    latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
+        epoch, lr_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
+    )
+    List_of_all_hyperparams.append(epochList)
+with open("data.json", "w") as f:
+    json.dump(List_of_all_hyperparams, f)
 # here we are going to start the training for the Classifier in other words the bottle neck classifier
 
 
