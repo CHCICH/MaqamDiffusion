@@ -104,7 +104,7 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
 
 
 LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
-epoch = 1
+epoch = 250
 
 List_of_all_hyperparams = []
 for lr_rate in LR_rate:
