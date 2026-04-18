@@ -103,18 +103,28 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
     # this is the first attempt to be able to do the classifications of Maqam in the latent space without contrastive learning methods
 
 
-LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
-epoch = 250
+testing = False
 
-List_of_all_hyperparams = []
-for lr_rate in LR_rate:
+if testing:
+    LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
+    epoch = 250
+
+    List_of_all_hyperparams = []
+    for lr_rate in LR_rate:
+        latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
+            epoch, lr_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
+        )
+        List_of_all_hyperparams.append(epochList)
+    with open("data.json", "w") as f:
+        json.dump(List_of_all_hyperparams, f)
+    # here we are going to start the training for the Classifier in other words the bottle neck classifier
+else:
+    LR_rate = 1e-3
+    epoch = 300
     latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
-        epoch, lr_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
+        epoch, LR_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
     )
-    List_of_all_hyperparams.append(epochList)
-with open("data.json", "w") as f:
-    json.dump(List_of_all_hyperparams, f)
-# here we are going to start the training for the Classifier in other words the bottle neck classifier
+    torch.save(latent_model.state_dict(), "model_weights.pth")
 
 
 def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size):
