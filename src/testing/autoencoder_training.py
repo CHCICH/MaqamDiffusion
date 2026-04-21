@@ -12,7 +12,6 @@ from models.Autencoder import AutoEncoder, Classifier
 # Dummy image-like data: batch=4, channels=1, height=256, width=256
 
 device = setup_torch()
-
 # how to print the directory I am in
 print(f"Current directory: {os.getcwd()}")
 
