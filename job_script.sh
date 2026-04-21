@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32000
 #SBATCH --gres=gpu:v100d32q:1
-#SBATCH --time=0-02:00:00
+#SBATCH --time=0-01:00:00
 
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=cbe05@mail.aub.edu
