@@ -104,41 +104,101 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
 
 
 testing = False
+already_trained = True
+train_autoencoder = False
+if train_autoencoder:
+    if testing:
+        LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
+        epoch = 250
 
-if testing:
-    LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
-    epoch = 250
+        List_of_all_hyperparams = []
+        for lr_rate in LR_rate:
+            latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
+                epoch, lr_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
+            )
+            List_of_all_hyperparams.append(epochList)
+        with open("data.json", "w") as f:
+            json.dump(List_of_all_hyperparams, f)
+        # here we are going to start the training for the Classifier in other words the bottle neck classifier
+    else:
+        if already_trained:
+            LR_rate = 1e-3
+            epoch = 300
+            latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
+                epoch, LR_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
+            )
+            torch.save(latent_model.state_dict(), "model_weights.pth")
+        else:
+            latent_model = AutoEncoder()
+            latent_model.load_state_dict(torch.load("model_weights.pth"))
 
-    List_of_all_hyperparams = []
-    for lr_rate in LR_rate:
-        latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
-            epoch, lr_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
-        )
-        List_of_all_hyperparams.append(epochList)
-    with open("data.json", "w") as f:
-        json.dump(List_of_all_hyperparams, f)
-    # here we are going to start the training for the Classifier in other words the bottle neck classifier
-else:
-    LR_rate = 1e-3
-    epoch = 300
-    latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
-        epoch, LR_rate, dataLoader, Loss_fn="MSE", optimizer="Adam"
-    )
-    torch.save(latent_model.state_dict(), "model_weights.pth")
+
+def converter_class_idx(class_idx, in_mapping=False):
+    inverse_class_mapping = {
+        "bayat": 1,
+        "hijaz": 7,
+        "hijazkar": 6,
+        "kurd": 0,
+        "nahawand": 4,
+        "rast": 3,
+        "saba": 5,
+        "segah": 2,
+    }
+    class_mapping = {
+        1: "bayat",
+        7: "hijaz",
+        6: "hijazkar",
+        0: "kurd",
+        4: "nahawand",
+        3: "rast",
+        5: "saba",
+        2: "segah",
+    }
+
+    if in_mapping:
+        return inverse_class_mapping.get(class_idx, -1)
+    else:
+        return class_mapping.get(class_idx, -1)
+
+
+def convert_label_list(list_label):
+    new_list = []
+    for label in list_label:
+        new_elem = int(converter_class_idx(label, True))
+        y = [0, 0, 0, 0, 0, 0, 0, 0]
+        y[new_elem] = 1
+        new_list.append(y)
+    return torch.tensor(new_list, dtype=torch.float32)
 
 
 def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size):
     latent_classifier = Classifier(input_size, 8)
     latent_classifier.to(device)
+    latent_autoencoder = AutoEncoder()
+    latent_autoencoder.load_state_dict(torch.load("model_weights.pth"))
+    if optimizer == "Adam":
+        optimizer = torch.optim.Adam(latent_autoencoder.parameters(), lr=lr_rate)
+    latent_autoencoder.to(device)
 
     schdeluer = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
     num_epochs = epoch
     for epoch in range(num_epochs):
         for batch in dataLoader:
-            batch = batch.to(device)
-            output = latent_model(batch)
-            loss = Loss_fn(output, batch)
-
+            images, labels = batch
+            images = images.to(device)
+            labels = convert_label_list(labels)
+            encoded_images = latent_autoencoder.encode_latent(images)
+            encoded_images = torch.flatten(encoded_images, start_dim=1)
+            output = latent_classifier(encoded_images)
+            loss = Loss_fn(output, labels)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+        schdeluer.step()
+        print(
+            f"Cross_Entropy lr = {lr_rate} Loss {epoch + 1}/{num_epochs} Loss is L ={loss.item()} "
+        )
+
+
+input_size = 16384
+train_classifier(300, 1e-3, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size)
