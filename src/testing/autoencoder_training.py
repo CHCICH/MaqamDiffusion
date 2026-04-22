@@ -181,6 +181,8 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
 
     schdeluer = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
     num_epochs = epoch
+
+    loss_value = []
     for epoch in range(num_epochs):
         for batch in dataLoader:
             images, labels = batch
@@ -197,7 +199,18 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
         print(
             f"Cross_Entropy lr = {lr_rate} Loss {epoch + 1}/{num_epochs} Loss is L ={loss.item()} "
         )
+        loss_value.append(loss.item())
+    return loss_value
 
 
-input_size = 16384
-train_classifier(300, 1e-3, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size)
+LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
+
+for lr in LR_rate:
+    input_size = 16384
+    loss_graph = []
+    t = train_classifier(
+        200, lr, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size
+    )
+    loss_graph.append(t)
+with open("loss_graph.json", "w") as f:
+    json.dump(loss_graph, f)
