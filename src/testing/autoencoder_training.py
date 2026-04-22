@@ -205,9 +205,10 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
 
 LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 
+loss_graph = []
+
 for lr in LR_rate:
     input_size = 16384
-    loss_graph = []
     t = train_classifier(
         200, lr, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size
     )
