@@ -179,7 +179,7 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
         optimizer = torch.optim.Adam(latent_autoencoder.parameters(), lr=lr_rate)
     latent_autoencoder.to(device)
 
-    schdeluer = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.955)
     num_epochs = epoch
 
     loss_value = []
@@ -195,7 +195,7 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-        schdeluer.step()
+        scheduler.step()
         print(
             f"Cross_Entropy lr = {lr_rate} Loss {epoch + 1}/{num_epochs} Loss is L ={loss.item()} "
         )

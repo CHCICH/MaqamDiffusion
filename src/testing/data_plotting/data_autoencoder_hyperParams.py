@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 with open("./loss_graph.json", "r") as file:
     data = json.load(file)
 
-print(len   (data[0]))
 final_Loss = [final_loss[-1] for final_loss in data]
 final_Loss.pop()
 lr_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01]
