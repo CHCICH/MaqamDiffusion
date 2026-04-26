@@ -203,15 +203,70 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
     return loss_value
 
 
+def train_contrasitve_model(epoch_count, dataLoader, weight_L):
+    autoencoder = AutoEncoder().to(device)
+    classifier = Classifier(16384, 8).to(device)
+
+    optimizer_autoencoder = torch.optim.Adam(autoencoder.parameters(), lr=1e-3)
+    optimizer_classifier = torch.optim.Adam(classifier.parameters(), lr=0.01)
+
+    scheduler_autoencoder = torch.optim.lr_scheduler.ExponentialLR(
+        optimizer_autoencoder, gamma=0.955
+    )
+    scheduler_classifier = torch.optim.lr_scheduler.ExponentialLR(
+        optimizer_classifier, gamma=0.955
+    )
+
+    mse_loss = torch.nn.MSELoss()
+    ce_loss = torch.nn.CrossEntropyLoss()
+
+    loss_value = []
+
+    for epoch in range(epoch_count):
+        for batch in dataLoader:
+            images, labels = batch
+            images = images.to(device)
+
+            labels = convert_label_list(labels)
+
+            output_autoencoder = autoencoder(images)
+
+            encoded_images = autoencoder.encode_latent(images)
+            encoded_images = torch.flatten(encoded_images, start_dim=1)
+
+            output_classifier = classifier(encoded_images)
+
+            loss_mse = mse_loss(output_autoencoder, images)
+            loss_ce = ce_loss(output_classifier, labels)
+
+            loss = loss_mse + weight_L * loss_ce
+
+            optimizer_autoencoder.zero_grad()
+            optimizer_classifier.zero_grad()
+
+            loss.backward()
+
+            optimizer_autoencoder.step()
+            optimizer_classifier.step()
+
+        scheduler_autoencoder.step()
+        scheduler_classifier.step()
+        loss_value.append(loss.item())
+    return loss_value
+
+
 LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 
-loss_graph = []
+# loss_graph = []
 
-for lr in LR_rate:
-    input_size = 16384
-    t = train_classifier(
-        200, lr, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size
-    )
-    loss_graph.append(t)
-with open("loss_graph.json", "w") as f:
-    json.dump(loss_graph, f)
+# for lr in LR_rate:
+#    input_size = 16384
+#    t = train_classifier(
+#        200, lr, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size
+#    )
+#    loss_graph.append(t)
+# with open("loss_graph.json", "w") as f:
+#    json.dump(loss_graph, f)
+l = train_contrasitve_model(300, dataLoader, 0.3)
+with open("loss_contrastive.json", "w") as f:
+    json.dump(l, f)
