@@ -223,11 +223,16 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
     loss_value = []
 
     for epoch in range(epoch_count):
+        epoch_total = 0
+        epoch_mse = 0
+        epoch_ce = 0
+        batch_count = 0
+
         for batch in dataLoader:
             images, labels = batch
             images = images.to(device)
 
-            labels = convert_label_list(labels)
+            labels = convert_label_list(labels).to(device)
 
             output_autoencoder = autoencoder(images)
 
@@ -249,9 +254,22 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
             optimizer_autoencoder.step()
             optimizer_classifier.step()
 
+            epoch_total += loss.item()
+            epoch_mse += loss_mse.item()
+            epoch_ce += loss_ce.item()
+            batch_count += 1
+
         scheduler_autoencoder.step()
         scheduler_classifier.step()
-        loss_value.append(loss.item())
+
+        loss_value.append(
+            {
+                "total": epoch_total / batch_count,
+                "mse": epoch_mse / batch_count,
+                "ce": epoch_ce / batch_count,
+            }
+        )
+
     return loss_value
 
 
@@ -267,6 +285,9 @@ LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 #    loss_graph.append(t)
 # with open("loss_graph.json", "w") as f:
 #    json.dump(loss_graph, f)
-l = train_contrasitve_model(300, dataLoader, 0.3)
+total_data = []
+for i in range(10):
+    data_got = train_contrasitve_model(300, dataLoader, 0.1 * i)
+    total_data.append(data_got)
 with open("loss_contrastive.json", "w") as f:
-    json.dump(l, f)
+    json.dump(total_data, f)
