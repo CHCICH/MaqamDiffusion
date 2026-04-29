@@ -103,12 +103,13 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
 
 
 testing = False
-already_trained = True
-train_autoencoder = False
+already_trained = False
+train_autoencoder = True
 if train_autoencoder:
     if testing:
-        LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
-        epoch = 250
+        # LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
+        LR_rate = [1e-3]
+        epoch = 300
 
         List_of_all_hyperparams = []
         for lr_rate in LR_rate:
@@ -120,7 +121,7 @@ if train_autoencoder:
             json.dump(List_of_all_hyperparams, f)
         # here we are going to start the training for the Classifier in other words the bottle neck classifier
     else:
-        if already_trained:
+        if not already_trained:
             LR_rate = 1e-3
             epoch = 300
             latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
@@ -275,6 +276,7 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
 
 LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 
+
 # loss_graph = []
 
 # for lr in LR_rate:
@@ -285,9 +287,9 @@ LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 #    loss_graph.append(t)
 # with open("loss_graph.json", "w") as f:
 #    json.dump(loss_graph, f)
-total_data = []
-for i in range(5):
-    data_got = train_contrasitve_model(300, dataLoader, 0.1 * i)
-    total_data.append(data_got)
-with open("loss_contrastive.json", "w") as f:
-    json.dump(total_data, f)
+#    total_data = []
+#    for i in range(5):
+#        data_got = train_contrasitve_model(300, dataLoader, 0.1 * i)
+#        total_data.append(data_got)
+#    with open("loss_contrastive.json", "w") as f:
+#        json.dump(total_data, f)
