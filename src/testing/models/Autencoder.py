@@ -79,7 +79,6 @@ class Classifier(nn.Module):
             nn.Linear(input_size // 8, output_size * 16),
             nn.ReLU(),
             nn.Linear(output_size * 16, output_size),
-            nn.Softmax(dim=1),
         )
 
     def forward(self, x):
