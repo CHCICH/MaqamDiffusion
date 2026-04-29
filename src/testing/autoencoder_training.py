@@ -208,7 +208,7 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
     classifier = Classifier(16384, 8).to(device)
 
     optimizer_autoencoder = torch.optim.Adam(autoencoder.parameters(), lr=1e-3)
-    optimizer_classifier = torch.optim.Adam(classifier.parameters(), lr=0.01)
+    optimizer_classifier = torch.optim.Adam(classifier.parameters(), lr=1e-3)
 
     scheduler_autoencoder = torch.optim.lr_scheduler.ExponentialLR(
         optimizer_autoencoder, gamma=0.955
