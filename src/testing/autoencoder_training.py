@@ -286,8 +286,8 @@ LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 # with open("loss_graph.json", "w") as f:
 #    json.dump(loss_graph, f)
 total_data = []
-for i in range(10):
-    data_got = train_contrasitve_model(300, dataLoader, 0.1 * i)
+for i in range(5):
+    data_got = train_contrasitve_model(300, dataLoader, 0.01 * i)
     total_data.append(data_got)
 with open("loss_contrastive.json", "w") as f:
     json.dump(total_data, f)
