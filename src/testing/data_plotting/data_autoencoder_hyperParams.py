@@ -10,7 +10,7 @@ OUT_DIR.mkdir(exist_ok=True)
 with open(FILE_PATH, "r") as f:
     data = json.load(f)
 
-lambdas = [0.1 * i for i in range(len(data))]
+lambdas = [0.01 * i for i in range(len(data))]
 
 metrics = ["total", "mse", "ce"]
 
@@ -26,10 +26,10 @@ for run_idx, run in enumerate(data):
         plt.plot(epochs, values)
         plt.xlabel("Epoch")
         plt.ylabel(metric.upper() + " Loss")
-        plt.title(f"{metric.upper()} Loss vs Epoch | lambda = {lam:.1f}")
+        plt.title(f"{metric.upper()} Loss vs Epoch | lambda = {lam:.2f}")
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(OUT_DIR / f"{metric}_lambda_{lam:.1f}.png", dpi=300)
+        plt.savefig(OUT_DIR / f"{metric}_lambda_{lam:.2f}.png", dpi=300)
         plt.show()
 
 # Combined comparison plots
@@ -40,7 +40,7 @@ for metric in metrics:
         lam = lambdas[run_idx]
         epochs = np.arange(1, len(run) + 1)
         values = [epoch_data[metric] for epoch_data in run]
-        plt.plot(epochs, values, label=f"lambda={lam:.1f}")
+        plt.plot(epochs, values, label=f"lambda={lam:.2f}")
 
     plt.xlabel("Epoch")
     plt.ylabel(metric.upper() + " Loss")
@@ -62,7 +62,7 @@ for metric in metrics:
         lambda_values = np.full_like(epochs, lam, dtype=float)
         losses = np.array([epoch_data[metric] for epoch_data in run])
 
-        ax.plot(epochs, lambda_values, losses, label=f"lambda={lam:.1f}")
+        ax.plot(epochs, lambda_values, losses, label=f"lambda={lam:.2f}")
 
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Lambda")

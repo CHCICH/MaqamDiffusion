@@ -244,7 +244,7 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
             loss_mse = mse_loss(output_autoencoder, images)
             loss_ce = ce_loss(output_classifier, labels)
 
-            loss = loss_mse + weight_L * loss_ce
+            loss = weight_L * loss_mse + loss_ce
 
             optimizer_autoencoder.zero_grad()
             optimizer_classifier.zero_grad()
