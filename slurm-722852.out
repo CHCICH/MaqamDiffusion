@@ -1,0 +1,14 @@
+Program will start executing in a bit
+✅ Using CUDA globally
+GPU: Tesla V100-PCIE-32GB
+Current directory: /home/cbe05/MaqamDiffusion
+Traceback (most recent call last):
+  File "/home/cbe05/MaqamDiffusion/src/testing/autoencoder_training.py", line 280, in <module>
+    t = train_classifier(
+  File "/home/cbe05/MaqamDiffusion/src/testing/autoencoder_training.py", line 183, in train_classifier
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.955)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/optim/lr_scheduler.py", line 586, in __init__
+    super().__init__(optimizer, last_epoch, verbose)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/optim/lr_scheduler.py", line 32, in __init__
+    raise TypeError(f'{type(optimizer).__name__} is not an Optimizer')
+TypeError: str is not an Optimizer
