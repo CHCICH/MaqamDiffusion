@@ -279,11 +279,11 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
 LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
 
 
-t = train_classifier(
-    300, 0.01, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size=2048
-)
-with open("loss_graph_new.json", "w") as f:
-    json.dump(t, f)
+#    t = train_classifier(
+#        300, 0.01, dataLoader, torch.nn.CrossEntropyLoss(), "Adam", input_size=2048
+#    )
+#    with open("loss_graph_new.json", "w") as f:
+#        json.dump(t, f)
 
 
 latent_autoencoder = AutoEncoder()
