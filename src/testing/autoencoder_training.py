@@ -293,7 +293,7 @@ classifier.load_state_dict(torch.load("autoencoder_weight.pth"))
 correct_ones = 0
 total = 0
 with torch.inference_mode():
-    for batch in dataLoader_test:
+    for batch in dataLoader:
         images, labels = batch
         images = images.to(device)
         labels = convert_label_list(labels).to(device)
