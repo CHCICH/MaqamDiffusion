@@ -201,6 +201,8 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
             f"Cross_Entropy lr = {lr_rate} Loss {epoch + 1}/{num_epochs} Loss is L ={loss.item()} "
         )
         loss_value.append(loss.item())
+    torch.save(latent_classifier.state_dict(), "autoencoder_weight.pth")
+
     return loss_value
 
 
@@ -282,6 +284,35 @@ t = train_classifier(
 )
 with open("loss_graph_new.json", "w") as f:
     json.dump(t, f)
+
+
+latent_autoencoder = AutoEncoder()
+latent_autoencoder.load_state_dict(torch.load("model_weights.pth"))
+classifier = Classifier(2048, 8)
+classifier.load_state_dict(torch.load("autoencoder_weight.pth"))
+correct_ones = 0
+total = 0
+with torch.inference_mode():
+    for batch in dataLoader_test:
+        images, labels = batch
+        images = images.to(device)
+        labels = convert_label_list(labels).to(device)
+
+        output_autoencoder = images
+
+        encoded_images = latent_autoencoder.encode_latent(images)
+        encoded_images = torch.flatten(encoded_images, start_dim=1)
+
+        output_classifier = classifier(encoded_images)
+        predicted_label = torch.argmax(output_classifier, dim=1)
+        real_label = torch.argmax(labels, dim=1)
+        correct_ones += (predicted_label == real_label).sum().item()
+        total += labels.size(0)
+accuarcy = correct_ones / total
+
+
+print(f"Correct: {correct_ones}/{total}")
+print(f"Accuracy: {accuarcy * 100:.2f}%")
 
 # loss_graph = []
 
