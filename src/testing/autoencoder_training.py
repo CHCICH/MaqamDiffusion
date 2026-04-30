@@ -130,7 +130,9 @@ if train_autoencoder:
             torch.save(latent_model.state_dict(), "model_weights.pth")
         else:
             latent_model = AutoEncoder()
-            latent_model.load_state_dict(torch.load("model_weights.pth", map_location=device))
+            latent_model.load_state_dict(
+                torch.load("model_weights.pth", map_location=device)
+            )
             latent_model.to(device)
 
 
@@ -180,7 +182,9 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
     latent_classifier.to(device)
 
     latent_autoencoder = AutoEncoder()
-    latent_autoencoder.load_state_dict(torch.load("model_weights.pth", map_location=device))
+    latent_autoencoder.load_state_dict(
+        torch.load("model_weights.pth", map_location=device)
+    )
     latent_autoencoder.to(device)
     latent_autoencoder.eval()
 
@@ -324,7 +328,7 @@ correct_ones = 0
 total = 0
 
 with torch.inference_mode():
-    for batch in dataLoader:
+    for batch in dataLoader_test:
         images, labels = batch
         images = images.to(device)
         labels = convert_label_list(labels).to(device)
@@ -365,3 +369,4 @@ print(f"Accuracy: {accuarcy * 100:.2f}%")
 #
 # with open("loss_contrastive.json", "w") as f:
 #     json.dump(total_data, f)
+
