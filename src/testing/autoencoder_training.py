@@ -234,6 +234,9 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
     return loss_value
 
 
+# here I just wanted to add a comment just to make sure to later on refactor the code
+
+
 def train_contrasitve_model(epoch_count, dataLoader, weight_L):
     autoencoder = AutoEncoder().to(device)
     classifier = Classifier(16384, 8).to(device)
@@ -369,4 +372,3 @@ print(f"Accuracy: {accuarcy * 100:.2f}%")
 #
 # with open("loss_contrastive.json", "w") as f:
 #     json.dump(total_data, f)
-
