@@ -1,0 +1,184 @@
+Program will start executing in a bit
+/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/utils/_device.py:77: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  return func(*args, **kwargs)
+✅ Using CUDA globally
+GPU: Tesla V100-PCIE-32GB
+✅ Using CUDA globally
+GPU: Tesla V100-PCIE-32GB
+Current directory: /home/cbe05/MaqamDiffusion
+lr = 0.001 Loss 1/150 Loss is L =0.04384414106607437 
+lr = 0.001 Loss 2/150 Loss is L =0.037085533142089844 
+lr = 0.001 Loss 3/150 Loss is L =0.02976217307150364 
+lr = 0.001 Loss 4/150 Loss is L =0.03086180053651333 
+lr = 0.001 Loss 5/150 Loss is L =0.02965785562992096 
+lr = 0.001 Loss 6/150 Loss is L =0.02593172900378704 
+lr = 0.001 Loss 7/150 Loss is L =0.025489551946520805 
+lr = 0.001 Loss 8/150 Loss is L =0.027309460565447807 
+lr = 0.001 Loss 9/150 Loss is L =0.024122238159179688 
+lr = 0.001 Loss 10/150 Loss is L =0.025082722306251526 
+lr = 0.001 Loss 11/150 Loss is L =0.02563927136361599 
+lr = 0.001 Loss 12/150 Loss is L =0.023226210847496986 
+lr = 0.001 Loss 13/150 Loss is L =0.02392207644879818 
+lr = 0.001 Loss 14/150 Loss is L =0.02409767545759678 
+lr = 0.001 Loss 15/150 Loss is L =0.025751007720828056 
+lr = 0.001 Loss 16/150 Loss is L =0.024845752865076065 
+lr = 0.001 Loss 17/150 Loss is L =0.02319861389696598 
+lr = 0.001 Loss 18/150 Loss is L =0.023997731506824493 
+lr = 0.001 Loss 19/150 Loss is L =0.02431313693523407 
+lr = 0.001 Loss 20/150 Loss is L =0.02598981373012066 
+lr = 0.001 Loss 21/150 Loss is L =0.023170320317149162 
+lr = 0.001 Loss 22/150 Loss is L =0.024171598255634308 
+lr = 0.001 Loss 23/150 Loss is L =0.02335645817220211 
+lr = 0.001 Loss 24/150 Loss is L =0.025503143668174744 
+lr = 0.001 Loss 25/150 Loss is L =0.02422938495874405 
+lr = 0.001 Loss 26/150 Loss is L =0.02223694510757923 
+lr = 0.001 Loss 27/150 Loss is L =0.02593066357076168 
+lr = 0.001 Loss 28/150 Loss is L =0.02164880558848381 
+lr = 0.001 Loss 29/150 Loss is L =0.0242198184132576 
+lr = 0.001 Loss 30/150 Loss is L =0.021674249321222305 
+lr = 0.001 Loss 31/150 Loss is L =0.0221864040941 
+lr = 0.001 Loss 32/150 Loss is L =0.022490501403808594 
+lr = 0.001 Loss 33/150 Loss is L =0.022039180621504784 
+lr = 0.001 Loss 34/150 Loss is L =0.02539672888815403 
+lr = 0.001 Loss 35/150 Loss is L =0.023639028891921043 
+lr = 0.001 Loss 36/150 Loss is L =0.02214287593960762 
+lr = 0.001 Loss 37/150 Loss is L =0.02281610481441021 
+lr = 0.001 Loss 38/150 Loss is L =0.0229484923183918 
+lr = 0.001 Loss 39/150 Loss is L =0.02089829370379448 
+lr = 0.001 Loss 40/150 Loss is L =0.02100031077861786 
+lr = 0.001 Loss 41/150 Loss is L =0.02283196523785591 
+lr = 0.001 Loss 42/150 Loss is L =0.024540474638342857 
+lr = 0.001 Loss 43/150 Loss is L =0.022280724719166756 
+lr = 0.001 Loss 44/150 Loss is L =0.024392560124397278 
+lr = 0.001 Loss 45/150 Loss is L =0.022945700213313103 
+lr = 0.001 Loss 46/150 Loss is L =0.023382922634482384 
+lr = 0.001 Loss 47/150 Loss is L =0.02317160926759243 
+lr = 0.001 Loss 48/150 Loss is L =0.0242026187479496 
+lr = 0.001 Loss 49/150 Loss is L =0.021819092333316803 
+lr = 0.001 Loss 50/150 Loss is L =0.024802181869745255 
+lr = 0.001 Loss 51/150 Loss is L =0.022060202434659004 
+lr = 0.001 Loss 52/150 Loss is L =0.02388722635805607 
+lr = 0.001 Loss 53/150 Loss is L =0.023340923711657524 
+lr = 0.001 Loss 54/150 Loss is L =0.022954627871513367 
+lr = 0.001 Loss 55/150 Loss is L =0.02367483451962471 
+lr = 0.001 Loss 56/150 Loss is L =0.02412923239171505 
+lr = 0.001 Loss 57/150 Loss is L =0.022218722850084305 
+lr = 0.001 Loss 58/150 Loss is L =0.022982453927397728 
+lr = 0.001 Loss 59/150 Loss is L =0.023942023515701294 
+lr = 0.001 Loss 60/150 Loss is L =0.022641316056251526 
+lr = 0.001 Loss 61/150 Loss is L =0.023831946775317192 
+lr = 0.001 Loss 62/150 Loss is L =0.021771559491753578 
+lr = 0.001 Loss 63/150 Loss is L =0.022230571135878563 
+lr = 0.001 Loss 64/150 Loss is L =0.020864883437752724 
+lr = 0.001 Loss 65/150 Loss is L =0.02269677072763443 
+lr = 0.001 Loss 66/150 Loss is L =0.02468048594892025 
+lr = 0.001 Loss 67/150 Loss is L =0.022444723173975945 
+lr = 0.001 Loss 68/150 Loss is L =0.024332556873559952 
+lr = 0.001 Loss 69/150 Loss is L =0.023875966668128967 
+lr = 0.001 Loss 70/150 Loss is L =0.021917060017585754 
+lr = 0.001 Loss 71/150 Loss is L =0.023915639147162437 
+lr = 0.001 Loss 72/150 Loss is L =0.023336077108979225 
+lr = 0.001 Loss 73/150 Loss is L =0.02262297086417675 
+lr = 0.001 Loss 74/150 Loss is L =0.022902777418494225 
+lr = 0.001 Loss 75/150 Loss is L =0.023063451051712036 
+lr = 0.001 Loss 76/150 Loss is L =0.02477525733411312 
+lr = 0.001 Loss 77/150 Loss is L =0.021251125261187553 
+lr = 0.001 Loss 78/150 Loss is L =0.02025911584496498 
+lr = 0.001 Loss 79/150 Loss is L =0.026075968518853188 
+lr = 0.001 Loss 80/150 Loss is L =0.020669007673859596 
+lr = 0.001 Loss 81/150 Loss is L =0.020943855866789818 
+lr = 0.001 Loss 82/150 Loss is L =0.023930713534355164 
+lr = 0.001 Loss 83/150 Loss is L =0.02307097055017948 
+lr = 0.001 Loss 84/150 Loss is L =0.02390916459262371 
+lr = 0.001 Loss 85/150 Loss is L =0.021630985662341118 
+lr = 0.001 Loss 86/150 Loss is L =0.02086135558784008 
+lr = 0.001 Loss 87/150 Loss is L =0.022474806755781174 
+lr = 0.001 Loss 88/150 Loss is L =0.02243690751492977 
+lr = 0.001 Loss 89/150 Loss is L =0.021921837702393532 
+lr = 0.001 Loss 90/150 Loss is L =0.02217387594282627 
+lr = 0.001 Loss 91/150 Loss is L =0.028071124106645584 
+lr = 0.001 Loss 92/150 Loss is L =0.022439569234848022 
+lr = 0.001 Loss 93/150 Loss is L =0.021900827065110207 
+lr = 0.001 Loss 94/150 Loss is L =0.022152835503220558 
+lr = 0.001 Loss 95/150 Loss is L =0.024125421419739723 
+lr = 0.001 Loss 96/150 Loss is L =0.020421484485268593 
+lr = 0.001 Loss 97/150 Loss is L =0.02590051293373108 
+lr = 0.001 Loss 98/150 Loss is L =0.023846495896577835 
+lr = 0.001 Loss 99/150 Loss is L =0.023108532652258873 
+lr = 0.001 Loss 100/150 Loss is L =0.02189715765416622 
+lr = 0.001 Loss 101/150 Loss is L =0.023917704820632935 
+lr = 0.001 Loss 102/150 Loss is L =0.021894481033086777 
+lr = 0.001 Loss 103/150 Loss is L =0.022402362897992134 
+lr = 0.001 Loss 104/150 Loss is L =0.02362925559282303 
+lr = 0.001 Loss 105/150 Loss is L =0.020378129556775093 
+lr = 0.001 Loss 106/150 Loss is L =0.021550694480538368 
+lr = 0.001 Loss 107/150 Loss is L =0.024553775787353516 
+lr = 0.001 Loss 108/150 Loss is L =0.022294610738754272 
+lr = 0.001 Loss 109/150 Loss is L =0.021286381408572197 
+lr = 0.001 Loss 110/150 Loss is L =0.023513823747634888 
+lr = 0.001 Loss 111/150 Loss is L =0.02222074382007122 
+lr = 0.001 Loss 112/150 Loss is L =0.022867849096655846 
+lr = 0.001 Loss 113/150 Loss is L =0.020736807957291603 
+lr = 0.001 Loss 114/150 Loss is L =0.023332493379712105 
+lr = 0.001 Loss 115/150 Loss is L =0.024812741205096245 
+lr = 0.001 Loss 116/150 Loss is L =0.02385214902460575 
+lr = 0.001 Loss 117/150 Loss is L =0.020995154976844788 
+lr = 0.001 Loss 118/150 Loss is L =0.021176347509026527 
+lr = 0.001 Loss 119/150 Loss is L =0.02136564999818802 
+lr = 0.001 Loss 120/150 Loss is L =0.020947447046637535 
+lr = 0.001 Loss 121/150 Loss is L =0.027457667514681816 
+lr = 0.001 Loss 122/150 Loss is L =0.022373152896761894 
+lr = 0.001 Loss 123/150 Loss is L =0.022168781608343124 
+lr = 0.001 Loss 124/150 Loss is L =0.02269117906689644 
+lr = 0.001 Loss 125/150 Loss is L =0.02246563695371151 
+lr = 0.001 Loss 126/150 Loss is L =0.024907177314162254 
+lr = 0.001 Loss 127/150 Loss is L =0.02105214260518551 
+lr = 0.001 Loss 128/150 Loss is L =0.023416487500071526 
+lr = 0.001 Loss 129/150 Loss is L =0.02364279143512249 
+lr = 0.001 Loss 130/150 Loss is L =0.024377070367336273 
+lr = 0.001 Loss 131/150 Loss is L =0.023112250491976738 
+lr = 0.001 Loss 132/150 Loss is L =0.02164648100733757 
+lr = 0.001 Loss 133/150 Loss is L =0.024281438440084457 
+lr = 0.001 Loss 134/150 Loss is L =0.020849812775850296 
+lr = 0.001 Loss 135/150 Loss is L =0.024080822244286537 
+lr = 0.001 Loss 136/150 Loss is L =0.025949401780962944 
+lr = 0.001 Loss 137/150 Loss is L =0.020510202273726463 
+lr = 0.001 Loss 138/150 Loss is L =0.022506793960928917 
+lr = 0.001 Loss 139/150 Loss is L =0.024213913828134537 
+lr = 0.001 Loss 140/150 Loss is L =0.02134046144783497 
+lr = 0.001 Loss 141/150 Loss is L =0.022545915096998215 
+lr = 0.001 Loss 142/150 Loss is L =0.02215682715177536 
+lr = 0.001 Loss 143/150 Loss is L =0.02200208604335785 
+lr = 0.001 Loss 144/150 Loss is L =0.02304239384829998 
+lr = 0.001 Loss 145/150 Loss is L =0.023876124992966652 
+lr = 0.001 Loss 146/150 Loss is L =0.02240721695125103 
+lr = 0.001 Loss 147/150 Loss is L =0.0220958199352026 
+lr = 0.001 Loss 148/150 Loss is L =0.02316313609480858 
+lr = 0.001 Loss 149/150 Loss is L =0.021591925993561745 
+lr = 0.001 Loss 150/150 Loss is L =0.022143695503473282 
+Traceback (most recent call last):
+  File "/home/cbe05/MaqamDiffusion/src/testing/autoencoder_training.py", line 65, in <module>
+    train_a, test_a, train_l, test_l = train_and_test_per_epoch(
+  File "/home/cbe05/MaqamDiffusion/src/testing/helper_training_functions.py", line 313, in train_and_test_per_epoch
+    output = classifer(encoded_images)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cbe05/MaqamDiffusion/src/testing/models/Autencoder.py", line 85, in forward
+    return self.classify(x)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/container.py", line 215, in forward
+    input = module(input)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/utils/_device.py", line 77, in __torch_function__
+    return func(*args, **kwargs)
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (5120x1024 and 2048x512)
