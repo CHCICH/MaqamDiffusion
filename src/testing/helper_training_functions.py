@@ -310,6 +310,8 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
             images = images.to(device)
             labels = convert_label_list(labels).to(device)
             encoded_images = latent_model(images)
+            encoded_images = torch.flatten(encoded_images, start_dim=1)
+
             output = classifer(encoded_images)
             Loss = loss_fn_classifer(output, labels)
 
@@ -337,6 +339,7 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
                 images = images.to(device)
                 labels = convert_label_list(labels).to(device)
                 encoded_images = latent_model(images)
+                encoded_images = torch.flatten(encoded_images, start_dim=1)
                 output = classifer(encoded_images)
                 Loss = loss_fn_classifer(output, labels)
                 true_label = torch.argmax(labels, dim=1)
