@@ -300,22 +300,23 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
         optimizer_classifier, gamma=0.955
     )
 
-    for _ in epoch_max:
+    for _ in range(epoch_max):
         batch_count = 0
         epoch_total = 0
-
+        correct_ones = 0
+        total = 0
         for batch in dataLoader:
             images, labels = batch
             images = images.to(device)
-            labels = convert_label_list(labels)
-            encoded_images = latent_model(labels)
+            labels = convert_label_list(labels).to(device)
+            encoded_images = latent_model(images)
             output = classifer(encoded_images)
             Loss = loss_fn_classifer(output, labels)
 
             true_label = torch.argmax(labels, dim=1)
             predicted_label = torch.argmax(output, dim=1)
-            correct_ones = (true_label == predicted_label).sum().item()
-            total = labels.size(0)
+            correct_ones += (true_label == predicted_label).sum().item()
+            total += labels.size(0)
             optimizer_classifier.zero_grad()
             Loss.backward()
             optimizer_classifier.step()
@@ -329,11 +330,13 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
         with torch.inference_mode():
             batch_count = 0
             epoch_total = 0
+            correct_ones = 0
+            total = 0
             for batch in dataLoader_test:
                 images, labels = batch
                 images = images.to(device)
-                labels = convert_label_list(labels)
-                encoded_images = latent_model(labels)
+                labels = convert_label_list(labels).to(device)
+                encoded_images = latent_model(images)
                 output = classifer(encoded_images)
                 Loss = loss_fn_classifer(output, labels)
                 true_label = torch.argmax(labels, dim=1)
