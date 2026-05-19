@@ -309,9 +309,9 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
             images, labels = batch
             images = images.to(device)
             labels = convert_label_list(labels).to(device)
-            encoded_images = latent_model(images)
+            encoded_images = latent_model.encode_latent(images)
             encoded_images = torch.flatten(encoded_images, start_dim=1)
-
+            print(encoded_images.shape)
             output = classifer(encoded_images)
             Loss = loss_fn_classifer(output, labels)
 
@@ -338,7 +338,7 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
                 images, labels = batch
                 images = images.to(device)
                 labels = convert_label_list(labels).to(device)
-                encoded_images = latent_model(images)
+                encoded_images = latent_model.encode_latent(images)
                 encoded_images = torch.flatten(encoded_images, start_dim=1)
                 output = classifer(encoded_images)
                 Loss = loss_fn_classifer(output, labels)
