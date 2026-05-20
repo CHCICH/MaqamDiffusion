@@ -28,7 +28,7 @@ data_tensor = torch.load("json_data/dataset_updated.pt", map_location=device)
 
 dataset = Dataset_Autoencoder_Classifier(data_tensor, normalize=True)
 
-train_size = 1100
+train_size = 900
 test_size = len(dataset) - train_size
 gen = torch.Generator(device=device)
 train_dataset, test_dataset = torch.utils.data.random_split(
@@ -73,7 +73,7 @@ if latent_classifier:
         json.dump(final_data, f)
 
 else:
-    weights = [0.05, 0.1, 0.2, 0.5, 0.8, 0.9]
+    weights = [0.1]
     absolute_final_data = []
     for weight in weights:
         train_ac, test_ac = train_contrasitve_model(
