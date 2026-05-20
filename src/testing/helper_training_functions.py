@@ -142,6 +142,8 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
     ce_loss = torch.nn.CrossEntropyLoss()
 
     loss_value = []
+    train_accuracy = []
+    test_accuracy = []
 
     for epoch in range(epoch_count):
         epoch_total = 0
@@ -149,8 +151,6 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
         epoch_ce = 0
         batch_count = 0
         correct_ones = 0
-        train_accuracy = []
-        test_accuracy = []
         total = 0
         autoencoder.train()
         classifier.train()
