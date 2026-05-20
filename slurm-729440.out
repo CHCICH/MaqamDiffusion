@@ -1,0 +1,42 @@
+Program will start executing in a bit
+/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/utils/_device.py:77: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  return func(*args, **kwargs)
+✅ Using CUDA globally
+GPU: Tesla V100-PCIE-32GB
+✅ Using CUDA globally
+GPU: Tesla V100-PCIE-32GB
+Current directory: /home/cbe05/MaqamDiffusion
+Traceback (most recent call last):
+  File "/home/cbe05/MaqamDiffusion/src/testing/autoencoder_training.py", line 65, in <module>
+    train_a, test_a, train_l, test_l = train_and_test_per_epoch(
+  File "/home/cbe05/MaqamDiffusion/src/testing/helper_training_functions.py", line 289, in train_and_test_per_epoch
+    latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
+  File "/home/cbe05/MaqamDiffusion/src/testing/helper_training_functions.py", line 250, in train
+    output = latent_model(images)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cbe05/MaqamDiffusion/src/testing/models/Autencoder.py", line 58, in forward
+    x = self.decoder(x)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/container.py", line 215, in forward
+    input = module(input)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cbe05/MaqamDiffusion/src/testing/models/Autencoder.py", line 28, in forward
+    x = self.op(x)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 952, in forward
+    return F.conv_transpose2d(
+  File "/apps/sw/miniconda/envs/ai-4/lib/python3.10/site-packages/torch/utils/_device.py", line 77, in __torch_function__
+    return func(*args, **kwargs)
+RuntimeError: Given transposed=1, weight of size [128, 256, 4, 4], expected input[40, 64, 2, 16] to have 128 channels, but got 64 channels instead
