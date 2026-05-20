@@ -73,7 +73,14 @@ if latent_classifier:
         json.dump(final_data, f)
 
 else:
-    train_ac, test_ac = train_contrasitve_model(100, dataLoader, 0.1, dataLoader_test)
-    final_data = [train_ac, test_ac]
+    weights = [0.05, 0.1, 0.2, 0.5, 0.8, 0.9]
+    absolute_final_data = []
+    for weight in weights:
+        train_ac, test_ac = train_contrasitve_model(
+            100, dataLoader, weight, dataLoader_test
+        )
+        final_data = [train_ac, test_ac]
+        absolute_final_data.append(final_data)
+
     with open("real_contrastive_now.json", "w") as f:
-        json.dump(final_data, f)
+        json.dump(absolute_final_data, f)
