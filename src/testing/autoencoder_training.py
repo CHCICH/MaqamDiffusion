@@ -75,5 +75,5 @@ if latent_classifier:
 else:
     train_ac, test_ac = train_contrasitve_model(100, dataLoader, 0.1, dataLoader_test)
     final_data = [train_ac, test_ac]
-    with open("real_contrastive_now.json") as f:
+    with open("real_contrastive_now.json", "w") as f:
         json.dump(final_data, f)
