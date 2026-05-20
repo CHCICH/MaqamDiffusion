@@ -63,10 +63,8 @@ classifier = Classifier(2048, 8)
 # total = 0
 
 train_a, test_a, train_l, test_l = train_and_test_per_epoch(
-    classifier, 200, dataLoader, dataLoader_test
+    classifier, 100, dataLoader, dataLoader_test
 )
+final_data = [train_a, test_a, train_l, test_l]
 with open("best_epoch.json", "w") as f:
-    json.dump(train_a, f)
-    json.dump(test_a, f)
-    json.dump(train_l, f)
-    json.dump(test_l, f)
+    json.dump(final_data, f)

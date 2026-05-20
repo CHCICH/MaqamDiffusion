@@ -74,10 +74,13 @@ class Classifier(nn.Module):
         self.classify = nn.Sequential(
             nn.Linear(input_size, input_size // 4),
             nn.ReLU(),
+            nn.Dropout(p=0.5),
             nn.Linear(input_size // 4, input_size // 8),
             nn.ReLU(),
+            nn.Dropout(p=0.4),
             nn.Linear(input_size // 8, output_size * 16),
             nn.ReLU(),
+            nn.Dropout(p=0.3),
             nn.Linear(output_size * 16, output_size),
         )
 

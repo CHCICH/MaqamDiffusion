@@ -295,12 +295,15 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
     test_loss = []
     train_loss = []
     loss_fn_classifer = torch.nn.CrossEntropyLoss()
-    optimizer_classifier = torch.optim.Adam(classifer.parameters(), lr=1e-3)
+    optimizer_classifier = torch.optim.AdamW(
+        classifer.parameters(), lr=1e-3, weight_decay=1e-3
+    )
     scheduler_classifier = torch.optim.lr_scheduler.ExponentialLR(
         optimizer_classifier, gamma=0.955
     )
 
     for _ in range(epoch_max):
+        classifer.train()
         batch_count = 0
         epoch_total = 0
         correct_ones = 0
@@ -328,7 +331,7 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
 
         train_accuracy.append(correct_ones / total)
         train_loss.append(epoch_total / batch_count)
-
+        classifer.eval()
         with torch.inference_mode():
             batch_count = 0
             epoch_total = 0
