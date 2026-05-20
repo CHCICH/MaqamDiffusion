@@ -122,12 +122,14 @@ def train_classifier(epoch, lr_rate, dataLoader, Loss_fn, optimizer, input_size)
 # and make it more modular and reusable, but I will keep it as is for now since I want to focus on the training process and not on the code structure
 
 
-def train_contrasitve_model(epoch_count, dataLoader, weight_L):
+def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
     autoencoder = AutoEncoder().to(device)
-    classifier = Classifier(16384, 8).to(device)
+    classifier = Classifier(2048, 8).to(device)
 
     optimizer_autoencoder = torch.optim.Adam(autoencoder.parameters(), lr=1e-3)
-    optimizer_classifier = torch.optim.Adam(classifier.parameters(), lr=1e-3)
+    optimizer_classifier = torch.optim.AdamW(
+        classifier.parameters(), lr=1e-3, weight_decay=1e-3
+    )
 
     scheduler_autoencoder = torch.optim.lr_scheduler.ExponentialLR(
         optimizer_autoencoder, gamma=0.955
@@ -146,7 +148,12 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
         epoch_mse = 0
         epoch_ce = 0
         batch_count = 0
-
+        correct_ones = 0
+        train_accuracy = []
+        test_accuracy = []
+        total = 0
+        autoencoder.train()
+        classifier.train()
         for batch in dataLoader:
             images, labels = batch
             images = images.to(device)
@@ -176,42 +183,54 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L):
             epoch_total += loss.item()
             epoch_mse += loss_mse.item()
             epoch_ce += loss_ce.item()
+            true_label = torch.argmax(labels, dim=1)
+            predicted_label = torch.argmax(output_classifier, dim=1)
+            correct_ones += (true_label == predicted_label).sum().item()
             batch_count += 1
-
+            total += labels.size(0)
+        train_accuracy.append(correct_ones / total)
         scheduler_autoencoder.step()
         scheduler_classifier.step()
 
-        loss_value.append(
-            {
-                "total": epoch_total / batch_count,
-                "mse": epoch_mse / batch_count,
-                "ce": epoch_ce / batch_count,
-            }
-        )
+        # here the infrence begins
+        epoch_total = 0
+        epoch_mse = 0
+        epoch_ce = 0
+        batch_count = 0
+        correct_ones = 0
+        total = 0
+        autoencoder.eval()
+        classifier.eval()
+        with torch.inference_mode():
+            for batch in dataLoader_test:
+                images, labels = batch
+                images = images.to(device)
 
-    return loss_value
+                labels = convert_label_list(labels).to(device)
 
+                output_autoencoder = autoencoder(images)
 
-def test_model(model, dataLoader, Loss_fn, optimizer, num_epochs):
-    model.eval()
-    total_mse = 0.0
-    total_mae = 0.0
-    num_batches = 0
+                encoded_images = autoencoder.encode_latent(images)
+                encoded_images = torch.flatten(encoded_images, start_dim=1)
 
-    output_data = []
+                output_classifier = classifier(encoded_images)
 
-    with torch.no_grad():
-        for batch in dataLoader:
-            batch = batch.to(device)
-            output = model(batch)
-            total_mse += Loss_fn(output, batch).item()
-            total_mae += torch.mean(torch.abs(output - batch)).item()
-            num_batches += 1
-            output_data.append(output.cpu().numpy())
+                loss_mse = mse_loss(output_autoencoder, images)
+                loss_ce = ce_loss(output_classifier, labels)
 
-    avg_mse = total_mse / max(1, num_batches)
-    avg_mae = total_mae / max(1, num_batches)
-    return avg_mse, avg_mae
+                loss = weight_L * loss_mse + loss_ce
+
+                epoch_total += loss.item()
+                epoch_mse += loss_mse.item()
+                epoch_ce += loss_ce.item()
+                true_label = torch.argmax(labels, dim=1)
+                predicted_label = torch.argmax(output_classifier, dim=1)
+                correct_ones += (true_label == predicted_label).sum().item()
+                batch_count += 1
+                total += labels.size(0)
+            test_accuracy.append(correct_ones / total)
+
+    return train_accuracy, test_accuracy
 
 
 def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):

@@ -54,17 +54,26 @@ latent_autoencoder = AutoEncoder()
 #   latent_autoencoder.load_state_dict(torch.load("model_weights.pth", map_location=device))
 #  latent_autoencoder.to(device)
 #    latent_autoencoder.eval()
-classifier = Classifier(2048 // 8, 8)
+classifier = Classifier(2048, 8)
 # classifier.load_state_dict(torch.load("classifier_weight.pth", map_location=device))
 # classifier.to(device)
 # classifier.eval()
 
 # correct_ones = 0
 # total = 0
+latent_classifier = False
 
-train_a, test_a, train_l, test_l = train_and_test_per_epoch(
-    classifier, 100, dataLoader, dataLoader_test
-)
-final_data = [train_a, test_a, train_l, test_l]
-with open("best_epoch.json", "w") as f:
-    json.dump(final_data, f)
+if latent_classifier:
+    train_a, test_a, train_l, test_l = train_and_test_per_epoch(
+        classifier, 100, dataLoader, dataLoader_test
+    )
+    final_data = [train_a, test_a, train_l, test_l]
+
+    with open("best_epoch.json", "w") as f:
+        json.dump(final_data, f)
+
+else:
+    train_ac, test_ac = train_contrasitve_model(100, dataLoader, 0.1, dataLoader_test)
+    final_data = [train_ac, test_ac]
+    with open("real_contrastive_now.json") as f:
+        json.dump(final_data, f)

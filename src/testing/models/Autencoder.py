@@ -41,11 +41,9 @@ class AutoEncoder(nn.Module):
             AutoEncoderBlock(128, 256, mode="encode"),
             AutoEncoderBlock(256, 128, mode="encode"),
             AutoEncoderBlock(128, 64, mode="encode"),
-            AutoEncoderBlock(64, 32, mode="encode"),
         )
 
         self.decoder = nn.Sequential(
-            AutoEncoderBlock(32, 64, mode="decode"),
             AutoEncoderBlock(64, 128, mode="decode"),
             AutoEncoderBlock(128, 256, mode="decode"),
             AutoEncoderBlock(256, 128, mode="decode"),
