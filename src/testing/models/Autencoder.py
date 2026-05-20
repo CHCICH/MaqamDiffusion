@@ -40,11 +40,12 @@ class AutoEncoder(nn.Module):
             AutoEncoderBlock(64, 128, mode="encode"),
             AutoEncoderBlock(128, 256, mode="encode"),
             AutoEncoderBlock(256, 128, mode="encode"),
-            # AutoEncoderBlock(128, 64, mode="encode"),
+            AutoEncoderBlock(128, 64, mode="encode"),
+            AutoEncoderBlock(64, 32, mode="encode"),
         )
 
         self.decoder = nn.Sequential(
-            # AutoEncoderBlock(64, 128, mode="decode"),
+            AutoEncoderBlock(32, 64, mode="decode"),
             AutoEncoderBlock(128, 256, mode="decode"),
             AutoEncoderBlock(256, 128, mode="decode"),
             AutoEncoderBlock(128, 64, mode="decode"),
@@ -74,13 +75,13 @@ class Classifier(nn.Module):
         self.classify = nn.Sequential(
             nn.Linear(input_size, input_size // 4),
             nn.ReLU(),
-            nn.Dropout(p=0.4),
+            nn.Dropout(p=0.2),
             nn.Linear(input_size // 4, input_size // 8),
             nn.ReLU(),
-            nn.Dropout(p=0.3),
+            nn.Dropout(p=0.15),
             nn.Linear(input_size // 8, output_size * 16),
             nn.ReLU(),
-            nn.Dropout(p=0.2),
+            nn.Dropout(p=0.1),
             nn.Linear(output_size * 16, output_size),
         )
 
