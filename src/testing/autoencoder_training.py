@@ -14,7 +14,6 @@ from helper_training_functions import (
     converter_class_idx,
     convert_label_list,
     test_model,
-    train_classifier,
     train,
     train_contrasitve_model,
     train_and_test_per_epoch,
@@ -27,8 +26,8 @@ print(f"Current directory: {os.getcwd()}")
 data_tensor = torch.load("json_data/dataset_updated.pt", map_location=device)
 
 dataset = Dataset_Autoencoder_Classifier(data_tensor, normalize=True)
-
-train_size = 900
+print(len(dataset))
+train_size = 1100
 test_size = len(dataset) - train_size
 gen = torch.Generator(device=device)
 train_dataset, test_dataset = torch.utils.data.random_split(
