@@ -161,6 +161,53 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
     return train_accuracy, test_accuracy
 
 
+def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
+    latent_model = AutoEncoder()
+    latent_model.to(device)
+
+    if Loss_fn == "MSE":
+        Loss_fn = torch.nn.MSELoss()
+    elif Loss_fn == "MAE":
+        Loss_fn = torch.nn.L1Loss()
+    elif Loss_fn == "BCE":
+        Loss_fn = torch.nn.BCEWithLogitsLoss()
+    else:
+        raise ValueError("Invalid Loss Function")
+
+    if optimizer == "Adam":
+        optimizer = torch.optim.Adam(latent_model.parameters(), lr=lr_rate)
+    elif optimizer == "AdamW":
+        optimizer = torch.optim.AdamW(latent_model.parameters(), lr=lr_rate)
+    elif optimizer == "SGD":
+        optimizer = torch.optim.SGD(latent_model.parameters(), lr=lr_rate)
+    else:
+        raise ValueError("Invalid Optimizer")
+
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.955)
+    num_epochs = epoch
+    epochList = []
+
+    for epoch in range(num_epochs):
+        latent_model.train()
+
+        for batch in dataLoader:
+            images, labels = batch
+            images = images.to(device)
+
+            output = latent_model(images)
+            loss = Loss_fn(output, images)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+        scheduler.step()
+        epochList.append(loss.item())
+        print(f"lr = {lr_rate} Loss {epoch + 1}/{num_epochs} Loss is L ={loss.item()} ")
+
+    return latent_model, Loss_fn, optimizer, num_epochs, epochList
+
+
 def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
     latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
         150, 1e-3, dataLoader, Loss_fn="MSE", optimizer="Adam"
