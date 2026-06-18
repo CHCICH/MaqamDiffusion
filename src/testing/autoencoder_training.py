@@ -81,5 +81,5 @@ else:
         final_data = [train_ac, test_ac]
         absolute_final_data.append(final_data)
 
-    with open("real_contrastive_now.json", "w") as f:
+    with open("real_contrastive_new_without_weights.json", "w") as f:
         json.dump(absolute_final_data, f)
