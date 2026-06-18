@@ -13,7 +13,7 @@ from models.Autencoder import AutoEncoder, Classifier
 from helper_training_functions import (
     converter_class_idx,
     convert_label_list,
-    test_model,
+    # test_model,
     train,
     train_contrasitve_model,
     train_and_test_per_epoch,
