@@ -7,7 +7,7 @@
 This repository contains the implementation, models, and evaluation frameworks for **Arabic Maqam Identification** using deep sequence modeling, generative diffusion scoring, and regularized latent joint representation models.
 
 * **Author:** Charbel El Haddad  
-* **Affiliation:** American University of Beirut (AUB) Research Department  
+* **Affiliation:** American University of Beirut (AUB) Mu Lab 
 
 ---
 
@@ -26,18 +26,10 @@ Our initial investigations began with a sequential Long Short-Term Memory (LSTM)
 ### 2. Conditional Convolutional Diffusion Classifier
 To leverage generative representations, we trained a conditional Convolutional Diffusion Model on spectrogram images $x$ conditioned on Maqam labels $y$. By feeding both the image and the label during training, the network learns to approximate the score function (the gradient of the log probability density):
 
-$$
-abla_{x_t} \log p_t(x_t \mid y)$$
-
 During inference, computing the exact density is intractable. We approximate it by taking the inner product (cosine distance) between the noisy sample $x_t$ and the denoised sample $\hat{x}_{0|y,t}$, which is obtained by applying the neural network predictor $\psi_	heta(x_t, t, y)$:
 
-$$	ext{Score}(y)  pprox \langle x_t, \hat{x}_{0|y,t} 
-angle$$
 
 To optimize classification, we defined a parameterized inner product space governed by a learnable metric matrix $A$:
-
-$$	ext{Metric}(x, y) = x^T A y$$
-
 We trained the metric matrix $A$ using stochastic gradient descent (SGD) to minimize the cross-entropy loss between the scores and the true labels. This approach reached an accuracy of 56.0%. To avoid over-optimizing and overfitting the generative metric, we pivoted to joint latent models.
 
 ### 3. Dual-Network Latent Space Models & Loss Formulations
@@ -90,7 +82,6 @@ If you use this research or codebase in your work, please cite:
 @article{elhaddad2026maqam,
   title={Arabic Maqam Identification via Generative Score-Matching and Regularized Latent Representations},
   author={El Haddad, Charbel},
-  journal={AUB Research Department Working Paper},
   year={2026}
 }
 ```
