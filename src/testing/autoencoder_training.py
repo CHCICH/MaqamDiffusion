@@ -30,9 +30,11 @@ print(len(dataset))
 train_size = 1100
 test_size = len(dataset) - train_size
 gen = torch.Generator(device=device)
-train_dataset, test_dataset = torch.utils.data.random_split(
-    dataset, [train_size, test_size], generator=gen
-)
+# train_dataset, test_dataset = torch.utils.data.random_split(
+# dataset, [train_size, test_size], generator=gen
+# )
+train_dataset = torch.utils.data.Subset(dataset, range(0, train_size))
+test_dataset = torch.utils.data.Subset(dataset, range(train_size, len(dataset)))
 
 dataLoader = DataLoader_AutoEncoder_Classifier(
     train_dataset, batch_size=40, shuffle=True
@@ -67,7 +69,6 @@ if latent_classifier:
         classifier, 100, dataLoader, dataLoader_test
     )
     final_data = [train_a, test_a, train_l, test_l]
-
     with open("best_epoch.json", "w") as f:
         json.dump(final_data, f)
 
