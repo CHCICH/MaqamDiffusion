@@ -12,7 +12,7 @@ def load_mels_with_labels_tuples(
     n_fft=2048,
     device="cuda" if torch.cuda.is_available() else "cpu",
     with_labels=True,
-    max_frames=1000,
+    max_frames=1024,
     saved_path="dataset_updated"
 ):
     """
@@ -45,6 +45,7 @@ def load_mels_with_labels_tuples(
             mono=True,
             res_type="kaiser_fast"
         )
+        
 
         if y.size == 0:
             print(f"⚠️ Skipping empty file: {filename}")
@@ -60,7 +61,7 @@ def load_mels_with_labels_tuples(
         mel_db = librosa.power_to_db(mel, ref=np.max, top_db=80)
         n_mels, T = mel_db.shape  
         for i in range(0, T, max_frames):
-            print(f"processing {filename} version {i//max_frames + 1} with label {label}")
+            print(f"processing {filename} version {i//max_frames + 1} with label {label}, mel shape: {mel_db[:, i:i+max_frames].shape}")
             chunk = mel_db[:, i:i+max_frames]
             if chunk.shape[1] < max_frames:
                 pad = max_frames - chunk.shape[1]

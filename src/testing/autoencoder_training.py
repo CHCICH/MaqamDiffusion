@@ -1,5 +1,7 @@
 import os
 import json
+import matplotlib
+import matplotlib.pyplot as plt
 
 import torch
 from check import setup_torch
@@ -22,16 +24,17 @@ from helper_training_functions import (
 
 device = setup_torch()
 print(f"Current directory: {os.getcwd()}")
+print(f"the current elements inside of json data: {os.listdir('json_data')}")
 
-data_tensor = torch.load("json_data/dataset_updated.pt", map_location=device)
+data_tensor = torch.load("json_data/dataset_updated_labled_Local.pt", map_location=device)
 
 dataset = Dataset_Autoencoder_Classifier(data_tensor, normalize=True)
 print(len(dataset))
-train_size = 1100
+train_size = 1200
 test_size = len(dataset) - train_size
 gen = torch.Generator(device=device)
 # train_dataset, test_dataset = torch.utils.data.random_split(
-# dataset, [train_size, test_size], generator=gen
+#  dataset, [train_size, test_size], generator=gen
 # )
 train_dataset = torch.utils.data.Subset(dataset, range(0, train_size))
 test_dataset = torch.utils.data.Subset(dataset, range(train_size, len(dataset)))
@@ -42,6 +45,8 @@ dataLoader = DataLoader_AutoEncoder_Classifier(
 dataLoader_test = DataLoader_AutoEncoder_Classifier(
     test_dataset, batch_size=30, shuffle=False
 )
+
+    
 
 
 LR_rate = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.5]
@@ -73,7 +78,7 @@ if latent_classifier:
         json.dump(final_data, f)
 
 else:
-    weights = [0.1]
+    weights = [0.5]
     absolute_final_data = []
     for weight in weights:
         train_ac, test_ac = train_contrasitve_model(
@@ -84,3 +89,14 @@ else:
 
     with open("real_contrastive_new_without_weights.json", "w") as f:
         json.dump(absolute_final_data, f)
+
+    matplotlib.pyplot.plot(range(1, 101), absolute_final_data[0][0], label="Train Accuracy")
+    matplotlib.pyplot.plot(range(1, 101), absolute_final_data[0][1], label="Test Accuracy")
+    matplotlib.pyplot.xlabel("Epochs")
+    matplotlib.pyplot.ylabel("Accuracy")
+    matplotlib.pyplot.title("Train and Test Accuracy over Epochs")
+    matplotlib.pyplot.legend()
+    matplotlib.pyplot.savefig("accuracy_plot.png")
+    plt.show()
+
+   #NOTE: change the dimension of the latent space please 

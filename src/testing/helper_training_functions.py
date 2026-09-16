@@ -52,7 +52,7 @@ def convert_label_list(list_label):
 
 def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
     autoencoder = AutoEncoder().to(device)
-    classifier = Classifier(2048, 8).to(device)
+    classifier = Classifier(16384, 8).to(device)
 
     optimizer_autoencoder = torch.optim.Adam(autoencoder.parameters(), lr=1e-3)
     optimizer_classifier = torch.optim.AdamW(
@@ -74,6 +74,7 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
     test_accuracy = []
 
     for epoch in range(epoch_count):
+        print(f"Epoch {epoch + 1}/{epoch_count}")
         epoch_total = 0
         epoch_mse = 0
         epoch_ce = 0
@@ -98,8 +99,8 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
             loss_mse = mse_loss(output_autoencoder, images)
             loss_ce = ce_loss(output_classifier, labels)
 
-            # loss = weight_L * loss_mse + loss_ce
-            loss = loss_ce
+            loss = weight_L * loss_mse + loss_ce
+        
 
             optimizer_autoencoder.zero_grad()
             optimizer_classifier.zero_grad()
@@ -110,7 +111,7 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
             optimizer_classifier.step()
 
             epoch_total += loss.item()
-            # epoch_mse += loss_mse.item()
+            epoch_mse += loss_mse.item()
             epoch_ce += loss_ce.item()
             true_label = torch.argmax(labels, dim=1)
             predicted_label = torch.argmax(output_classifier, dim=1)
@@ -147,8 +148,8 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
                 loss_mse = mse_loss(output_autoencoder, images)
                 loss_ce = ce_loss(output_classifier, labels)
 
-                # loss = weight_L * loss_mse + loss_ce
-                loss = loss_ce
+                loss = weight_L * loss_mse + loss_ce
+                #loss = loss_ce
 
                 epoch_total += loss.item()
                 epoch_mse += loss_mse.item()
