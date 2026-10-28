@@ -1,30 +1,38 @@
+import os
+
 import torch
+import random
 from check import setup_torch
 from models.Autencoder import AutoEncoder, Classifier
+from models.Data_Load import DataLoader_AutoEncoder_Classifier, Dataset_Autoencoder_Classifier
+
 
 device = setup_torch()
 
 
 def converter_class_idx(class_idx, in_mapping=False):
+
+    class_idx = class_idx.lower()
     inverse_class_mapping = {
-        "bayat": 1,
-        "hijaz": 7,
-        "hijazkar": 6,
-        "kurd": 0,
-        "nahawand": 4,
-        "rast": 3,
+        "bayati": 1, #this works 
+        "hijaz": 7, #this works 
+        "kurd": 0, #this works also
+        "nahawand": 4, #this works
+        "rast": 3, # this also works
         "saba": 5,
-        "segah": 2,
+        "other traditional": 2,
+        "ajam": 6
+
     }
 
     class_mapping = {
         1: "bayat",
         7: "hijaz",
-        6: "hijazkar",
+        6: "ajam",
         0: "kurd",
         4: "nahawand",
         3: "rast",
-        5: "saba",
+        5: "other traditional",
         2: "segah",
     }
 
@@ -50,9 +58,19 @@ def convert_label_list(list_label):
 # and make it more modular and reusable, but I will keep it as is for now since I want to focus on the training process and not on the code structure
 
 
-def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
-    autoencoder = AutoEncoder().to(device)
-    classifier = Classifier(16384, 8).to(device)
+def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test,type_):
+    weight_path_autoencoder = "autoencoder_weight.pth"
+    weight_path_classifer = "classifer_weight.pth"
+
+
+    autoencoder = AutoEncoder().to(device) 
+    if os.path.exists(weight_path_autoencoder):
+        autoencoder.load_state_dict(torch.load(weight_path_autoencoder, map_location=device))
+    
+    classifier = Classifier(2048, 8).to(device)
+    if os.path.exists(weight_path_classifer):
+        classifier.load_state_dict(torch.load(weight_path_classifer, map_location=device))
+
 
     optimizer_autoencoder = torch.optim.Adam(autoencoder.parameters(), lr=1e-3)
     optimizer_classifier = torch.optim.AdamW(
@@ -83,59 +101,10 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
         total = 0
         autoencoder.train()
         classifier.train()
-        for batch in dataLoader:
-            images, labels = batch
-            images = images.to(device)
-
-            labels = convert_label_list(labels).to(device)
-
-            output_autoencoder = autoencoder(images)
-
-            encoded_images = autoencoder.encode_latent(images)
-            encoded_images = torch.flatten(encoded_images, start_dim=1)
-
-            output_classifier = classifier(encoded_images)
-
-            loss_mse = mse_loss(output_autoencoder, images)
-            loss_ce = ce_loss(output_classifier, labels)
-
-            loss = weight_L * loss_mse + loss_ce
-        
-
-            optimizer_autoencoder.zero_grad()
-            optimizer_classifier.zero_grad()
-
-            loss.backward()
-
-            optimizer_autoencoder.step()
-            optimizer_classifier.step()
-
-            epoch_total += loss.item()
-            epoch_mse += loss_mse.item()
-            epoch_ce += loss_ce.item()
-            true_label = torch.argmax(labels, dim=1)
-            predicted_label = torch.argmax(output_classifier, dim=1)
-            correct_ones += (true_label == predicted_label).sum().item()
-            batch_count += 1
-            total += labels.size(0)
-        train_accuracy.append(correct_ones / total)
-        scheduler_autoencoder.step()
-        scheduler_classifier.step()
-
-        # here the infrence begins
-        epoch_total = 0
-        epoch_mse = 0
-        epoch_ce = 0
-        batch_count = 0
-        correct_ones = 0
-        total = 0
-        autoencoder.eval()
-        classifier.eval()
-        with torch.inference_mode():
-            for batch in dataLoader_test:
+        if type_ == "train":
+            for batch in dataLoader:
                 images, labels = batch
                 images = images.to(device)
-
                 labels = convert_label_list(labels).to(device)
 
                 output_autoencoder = autoencoder(images)
@@ -149,7 +118,15 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
                 loss_ce = ce_loss(output_classifier, labels)
 
                 loss = weight_L * loss_mse + loss_ce
-                #loss = loss_ce
+            
+
+                optimizer_autoencoder.zero_grad()
+                optimizer_classifier.zero_grad()
+
+                loss.backward()
+
+                optimizer_autoencoder.step()
+                optimizer_classifier.step()
 
                 epoch_total += loss.item()
                 epoch_mse += loss_mse.item()
@@ -159,7 +136,54 @@ def train_contrasitve_model(epoch_count, dataLoader, weight_L, dataLoader_test):
                 correct_ones += (true_label == predicted_label).sum().item()
                 batch_count += 1
                 total += labels.size(0)
-            test_accuracy.append(correct_ones / total)
+            train_accuracy.append(correct_ones / total)
+            # scheduler_autoencoder.step()
+            # scheduler_classifier.step()
+
+            # here the infrence begins
+            epoch_total = 0
+            epoch_mse = 0
+            epoch_ce = 0
+            batch_count = 0
+            correct_ones = 0
+            total = 0
+
+            torch.save(autoencoder.state_dict(), weight_path_autoencoder)
+            torch.save(classifier.state_dict(), weight_path_classifer)
+                
+        else:
+            autoencoder.eval()
+            classifier.eval()
+            with torch.inference_mode():
+                for batch in dataLoader_test:
+                    images, labels = batch
+                    images = images.to(device)
+
+                    labels = convert_label_list(labels).to(device)
+
+                    output_autoencoder = autoencoder(images)
+
+                    encoded_images = autoencoder.encode_latent(images)
+                    encoded_images = torch.flatten(encoded_images, start_dim=1)
+
+                    output_classifier = classifier(encoded_images)
+
+                    loss_mse = mse_loss(output_autoencoder, images)
+                    loss_ce = ce_loss(output_classifier, labels)
+
+                    loss = weight_L * loss_mse + loss_ce
+                    #loss = loss_ce
+
+                    epoch_total += loss.item()
+                    epoch_mse += loss_mse.item()
+                    epoch_ce += loss_ce.item()
+                    true_label = torch.argmax(labels, dim=1)
+                    predicted_label = torch.argmax(output_classifier, dim=1)
+                    correct_ones += (true_label == predicted_label).sum().item()
+                    batch_count += 1
+                    total += labels.size(0)
+                test_accuracy.append(correct_ones / total)
+
 
     return train_accuracy, test_accuracy
 
@@ -211,7 +235,7 @@ def train(epoch, lr_rate, dataLoader, Loss_fn, optimizer):
     return latent_model, Loss_fn, optimizer, num_epochs, epochList
 
 
-def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
+def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test,traing_testing_activity:bool = False):
     latent_model, Loss_fn, optimizer, num_epochs, epochList = train(
         150, 1e-3, dataLoader, Loss_fn="MSE", optimizer="Adam"
     )
@@ -282,3 +306,193 @@ def train_and_test_per_epoch(classifer, epoch_max, dataLoader, dataLoader_test):
             test_loss.append(epoch_total / batch_count)
 
     return train_accuracy, test_accuracy, train_loss, test_loss
+
+
+
+
+def train_contrasitve_model_updated_to_account_for_partitions(epoch_count, weight_L, dataLoader_test, type_):
+    weight_path_autoencoder = "autoencoder_weight.pth"
+    weight_path_classifer = "classifer_weight.pth"
+
+    autoencoder = AutoEncoder().to(device) 
+    if os.path.exists(weight_path_autoencoder):
+        autoencoder.load_state_dict(torch.load(weight_path_autoencoder, map_location=device))
+    
+    classifier = Classifier(2048, 8).to(device)
+    if os.path.exists(weight_path_classifer):
+        classifier.load_state_dict(torch.load(weight_path_classifer, map_location=device))
+
+    optimizer_autoencoder = torch.optim.Adam(autoencoder.parameters(), lr=1e-3)
+    optimizer_classifier = torch.optim.AdamW(
+        classifier.parameters(), lr=1e-3, weight_decay=1e-3
+    )
+
+    mse_loss = torch.nn.MSELoss()
+    ce_loss = torch.nn.CrossEntropyLoss()
+
+    train_accuracy = []
+    epoch_loss_ce = [] 
+    epoch_loss_mse = [] 
+
+    partition_set = [
+        "dataset_updated_labled_Local.pt_part_0.pt", 
+        "dataset_updated_labled_Local.pt_part_1.pt" ,
+        "dataset_updated_labled_Local.pt_part_2.pt",
+        "dataset_updated_labled_Local.pt_part_3.pt",
+        "dataset_updated_labled_Local.pt_part_4.pt",
+        "dataset_updated_labled_Local.pt_part_5.pt",
+        "dataset_updated_labled_Local.pt_part_6.pt",
+        "dataset_updated_labled_Local.pt_part_7.pt",
+        "dataset_updated_labled_Local.pt_part_8.pt",
+        "dataset_updated_labled_Local.pt_part_9.pt",
+        "dataset_updated_labled_Local.pt_part_10.pt",
+        "dataset_updated_labled_Local.pt_part_11.pt",
+        "dataset_updated_labled_Local.pt_part_12.pt",
+        "dataset_updated_labled_Local.pt_part_13.pt",
+        "dataset_updated_labled_Local.pt_part_14.pt",
+        "dataset_updated_labled_Local.pt_part_15.pt",
+        "dataset_updated_labled_Local.pt_part_16.pt",
+    ]
+
+    for epoch in range(epoch_count):
+        print(f"\n--- Epoch {epoch + 1}/{epoch_count} ---")
+        
+        epoch_total_mse = 0
+        epoch_total_ce = 0
+        epoch_total_batches = 0
+        
+        correct_ones = 0
+        total_samples = 0
+        
+        autoencoder.train()
+        classifier.train()
+
+        random.shuffle(partition_set)
+        
+        for parti in partition_set:
+            dataLoader = load_dataLoader(partition=parti)
+            
+            for batch in dataLoader:
+                images, labels = batch
+                images = images.to(device)
+                labels = convert_label_list(labels).to(device)
+
+                output_autoencoder = autoencoder(images)
+                encoded_images = autoencoder.encode_latent(images)
+                encoded_images = torch.flatten(encoded_images, start_dim=1)
+                output_classifier = classifier(encoded_images)
+
+                loss_mse = mse_loss(output_autoencoder, images)
+                loss_ce = ce_loss(output_classifier, labels)
+
+                loss = weight_L * loss_mse + loss_ce
+
+                optimizer_autoencoder.zero_grad()
+                optimizer_classifier.zero_grad()
+                loss.backward()
+                optimizer_autoencoder.step()
+                optimizer_classifier.step()
+
+                # Accumulate raw losses across all partitions for this epoch
+                epoch_total_mse += loss_mse.item()
+                epoch_total_ce += loss_ce.item()
+                epoch_total_batches += 1
+
+                true_label = torch.argmax(labels, dim=1)
+                predicted_label = torch.argmax(output_classifier, dim=1)
+                correct_ones += (true_label == predicted_label).sum().item()
+                total_samples += labels.size(0)
+                
+            del dataLoader
+            torch.cuda.empty_cache()
+
+        avg_epoch_mse = epoch_total_mse / epoch_total_batches if epoch_total_batches > 0 else 0
+        avg_epoch_ce = epoch_total_ce / epoch_total_batches if epoch_total_batches > 0 else 0
+        epoch_acc = correct_ones / total_samples if total_samples > 0 else 0
+        test_epoch_ce, test_epoch_acc = test_contrastive_adv()
+        print(test_epoch_acc)
+        
+
+        epoch_loss_mse.append(avg_epoch_mse)
+        epoch_loss_ce.append(avg_epoch_ce)
+        train_accuracy.append(epoch_acc)
+
+        print(f"Epoch {epoch + 1} Results -> Train Loss CE: {avg_epoch_ce:.4f} | Train Loss MSE: {avg_epoch_mse:.4f} | Accuracy: {epoch_acc:.4f}")
+
+    torch.save(autoencoder.state_dict(), weight_path_autoencoder)
+    torch.save(classifier.state_dict(), weight_path_classifer)
+
+    return epoch_loss_mse, epoch_loss_ce
+
+
+def load_dataLoader(partition:str):
+
+    data_tensor = torch.load(f"json_data/{partition}", map_location=device)
+
+
+    dataset = Dataset_Autoencoder_Classifier(data_tensor, normalize=True)
+
+    train_size = len(dataset)
+
+    train_dataset = torch.utils.data.Subset(dataset, range(0, train_size))
+
+    dataLoader = DataLoader_AutoEncoder_Classifier(
+        train_dataset, batch_size=40, shuffle=True
+    )
+
+    return dataLoader
+
+
+
+def test_contrastive_adv():
+    autoencoder_path = "autoencoder_weight.pth"
+    classider_path = "classifier_weight.pth"
+    list_of_partition_to_train = [  "dataset_updated_labled_Local.pt_part_17.pt", 
+                                    "dataset_updated_labled_Local.pt_part_18.pt" ,
+                                    "dataset_updated_labled_Local.pt_part_19.pt",
+                                    "dataset_updated_labled_Local.pt_part_20.pt"]
+
+    autoencoder_model = AutoEncoder().to(device)
+    classifier_model = Classifier(2048,8).to(device)
+    sum_of_correct = 0
+    total_sum = 0
+    if os.path.exists(autoencoder_path):
+        autoencoder_model.load_state_dict(torch.load(autoencoder_path,map_location=device))
+    if os.path.exists(classider_path):
+        classifier_model.load_state_dict(torch.load(classider_path,map_location=device))
+
+    classifier_model.eval()
+    autoencoder_model.eval()
+    mse_loss_fn = torch.nn.MSELoss()
+    ce_loss_fn = torch.nn.CrossEntropyLoss()
+    mse_loss = 0
+    ce_loss= 0
+
+    with torch.inference_mode():
+        for partition in list_of_partition_to_train:
+            dataLoader = load_dataLoader(partition=partition)
+            for batch in dataLoader:
+                image, label = batch
+                image.to(device)
+                label = convert_label_list(label).to(device)
+                encoded_image = autoencoder_model.encode_latent(image)
+                encoded_image = torch.flatten(encoded_image,start_dim =1)
+                
+                label_result = classifier_model(encoded_image)
+                choosed_maqam = torch.argmax(label_result,dim=1)
+                true_label = torch.argmax(label,dim=1)
+                true_labels_count = (choosed_maqam == true_label).sum().item()
+                sum_of_correct += true_labels_count
+                total_sum += len(label)
+                
+
+    accuracy = sum_of_correct / total_sum
+
+
+    return ce_loss, accuracy
+        
+            
+
+
+
+

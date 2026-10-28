@@ -40,11 +40,11 @@ class AutoEncoder(nn.Module):
             AutoEncoderBlock(64, 128, mode="encode"),
             AutoEncoderBlock(128, 256, mode="encode"),
             AutoEncoderBlock(256, 128, mode="encode"),
-            #AutoEncoderBlock(128, 64, mode="encode"),
+            AutoEncoderBlock(128, 64, mode="encode"),
         )
 
         self.decoder = nn.Sequential(
-            #AutoEncoderBlock(64, 128, mode="decode"),
+            AutoEncoderBlock(64, 128, mode="decode"),
             AutoEncoderBlock(128, 256, mode="decode"),
             AutoEncoderBlock(256, 128, mode="decode"),
             AutoEncoderBlock(128, 64, mode="decode"),
@@ -86,3 +86,16 @@ class Classifier(nn.Module):
 
     def forward(self, x):
         return self.classify(x)
+
+class Layer_Block():
+    pass
+
+
+
+class Network_full_distribution(nn.Module):
+    def __init__(self,input_size=1000, output_size=1000, enable_embedding=False):
+        self.input_size = input_size
+        self.output_size = output_size
+        self.enable_embedding = enable_embedding
+        self.custom_layer = Layer_Block()
+        

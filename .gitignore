@@ -4,3 +4,4 @@ activate
 __pycache__
 json_data
 *.out
+/data_set
